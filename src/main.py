@@ -2,9 +2,9 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
-from sim.world import World
-from vehicle.model import Vehicle
-from adas.pid_acc import PIDACC
+from src.sim.world import World
+from src.vehicle.model import Vehicle
+from src.adas.pid_acc import PIDACC
 
 
 # =====================
