@@ -1,194 +1,214 @@
-📘 ACC Simulation with PID & ML Imitation Learning
+# ACC Simulation with PID and ML Imitation Learning
 
-Adaptive Cruise Control (ACC) simulation project
-PID 기반 제어기를 기준 정책(Teacher)으로 설정하고,
-시뮬레이션 로그를 활용해 Machine Learning 기반 가속도 제어기(Student) 를 학습 및 검증하는 프로젝트입니다.
+Adaptive Cruise Control (ACC) 시뮬레이션 프로젝트입니다.  
+PID 기반 ACC 제어기를 기준 정책(Teacher)으로 설정하고,  
+시뮬레이션 로그를 활용해 Machine Learning 기반 가속도 제어기(Student)를 학습 및 검증합니다.
 
-1. 프로젝트 개요
+본 프로젝트의 핵심 목표는  
+Rule-based PID 제어기를 데이터 기반 제어기로 대체할 수 있는 가능성을 실험적으로 확인하는 것입니다.
 
-본 프로젝트는 Adaptive Cruise Control (ACC) 시스템을 단순화한 시뮬레이션 환경에서,
+---
 
-PID 제어기의 동작을 명확히 이해하고
+## 1. Project Overview
 
-해당 제어 정책을 데이터로 수집한 뒤
+본 프로젝트는 단순화된 ACC 시뮬레이션 환경에서 다음 과정을 수행합니다.
 
-Machine Learning 모델이 PID 제어기를 모사(imitation) 할 수 있는지 검증하는 것을 목표로 합니다.
+1. PID 기반 ACC 제어기 구현
+2. 다양한 시나리오에서 시뮬레이션 수행
+3. PID 제어기의 가속도 명령을 데이터로 수집
+4. Machine Learning 모델을 이용한 PID 정책 모사 (Imitation Learning)
+5. ML 기반 ACC 제어기를 시뮬레이터에 직접 적용
+6. PID와 ML 제어기의 주행 성능 비교
 
-궁극적으로는
+---
 
-Rule-based PID → Data-driven Controller
-로의 전환 가능성을 실험적으로 확인합니다.
+## 2. Core Concept
 
-2. 핵심 아이디어
+PID 제어기를 기준 정책으로 설정하고,  
+해당 제어기의 행동을 ML 모델이 학습하도록 구성합니다.
+
+# ACC Simulation with PID and ML Imitation Learning
+
+Adaptive Cruise Control (ACC) 시뮬레이션 프로젝트입니다.  
+PID 기반 ACC 제어기를 기준 정책(Teacher)으로 설정하고,  
+시뮬레이션 로그를 활용해 Machine Learning 기반 가속도 제어기(Student)를 학습 및 검증합니다.
+
+본 프로젝트의 핵심 목표는  
+Rule-based PID 제어기를 데이터 기반 제어기로 대체할 수 있는 가능성을 실험적으로 확인하는 것입니다.
+
+---
+
+## 1. Project Overview
+
+본 프로젝트는 단순화된 ACC 시뮬레이션 환경에서 다음 과정을 수행합니다.
+
+1. PID 기반 ACC 제어기 구현
+2. 다양한 시나리오에서 시뮬레이션 수행
+3. PID 제어기의 가속도 명령을 데이터로 수집
+4. Machine Learning 모델을 이용한 PID 정책 모사 (Imitation Learning)
+5. ML 기반 ACC 제어기를 시뮬레이터에 직접 적용
+6. PID와 ML 제어기의 주행 성능 비교
+
+---
+
+## 2. Core Concept
+
+PID 제어기를 기준 정책으로 설정하고,  
+해당 제어기의 행동을 ML 모델이 학습하도록 구성합니다.
 PID Controller (Teacher)
-        ↓
+↓
 Simulation Log (state → accel)
-        ↓
+↓
 ML Regression Model
-        ↓
+↓
 ML-based ACC Controller
 
 
-PID 제어기는 baseline / reference policy
+---
 
-ML 모델은 PID가 만든 가속도 명령을 학습
+## 3. Project Structure
 
-동일 시나리오에서 PID vs ML 주행 성능 비교
-
-3. 프로젝트 구조
 acc_sim/
 ├── data/
-│   └── ml_dataset.csv          # PID 시뮬 로그 기반 ML 데이터셋
+│ └── ml_dataset.csv
 │
 ├── notebooks/
-│   ├── eda.ipynb               # 데이터 분석 및 시각화
-│   └── analysis.ipynb
+│ ├── eda.ipynb
+│ └── analysis.ipynb
 │
 ├── results/
-│   ├── acc_log.csv
-│   └── pid_best_result.csv
+│ ├── acc_log.csv
+│ └── pid_best_result.csv
 │
 ├── src/
-│   ├── adas/
-│   │   └── pid_acc.py          # PID 기반 ACC 제어기
-│   │
-│   ├── sim/
-│   │   └── world.py            # 시뮬레이션 환경
-│   │
-│   ├── vehicle/
-│   │   └── model.py            # 차량 동역학 모델
-│   │
-│   ├── experiments/
-│   │   └── runner.py           # 공용 시뮬레이션 실행 엔진
-│   │
-│   └── ml/
-│       ├── generate_ml_dataset.py  # ML 학습용 데이터 생성
-│       ├── train_ml_accel.py       # ML 가속도 회귀 모델 학습
-│       └── ml_acc_controller.py    # ML 기반 ACC Controller
+│ ├── adas/
+│ │ └── pid_acc.py
+│ │
+│ ├── sim/
+│ │ └── world.py
+│ │
+│ ├── vehicle/
+│ │ └── model.py
+│ │
+│ ├── experiments/
+│ │ └── runner.py
+│ │
+│ └── ml/
+│ ├── generate_ml_dataset.py
+│ ├── train_ml_accel.py
+│ └── ml_acc_controller.py
 │
-├── main.py                      # PID 기반 시뮬 및 Gain Sweep
+├── main.py
 ├── requirements.txt
 └── README.md
 
-4. 시뮬레이션 환경
-차량 모델
 
-1D longitudinal motion
+---
 
-상태 변수:
+## 4. Simulation Environment
 
-ego speed
+### Vehicle Model
+- 1D longitudinal motion
+- Discrete-time simulation
 
-lead speed
+### State Variables
+- Ego vehicle speed
+- Lead vehicle speed
+- Relative distance
+- Relative speed
+- Time headway
 
-relative distance
+### Control Objective
+- Maintain target time headway
+- Avoid excessive acceleration and deceleration
 
-time headway
+---
 
-ACC 제어 목표
+## 5. PID-based ACC Controller
 
-목표 Time Headway 유지
+PID 기반 ACC 제어기는 다음 요소를 사용해 가속도를 계산합니다.
 
-과도한 가속/감속 방지
+- Time headway error
+- Integral term
+- Derivative term
+- Acceleration saturation (physical constraint)
 
-5. PID 기반 ACC
+PID 제어기는 안정적인 기준 정책으로 사용되며,  
+ML 학습을 위한 Teacher 역할을 수행합니다.
 
-PID 제어기는 다음 항목을 기반으로 가속도를 계산합니다.
+---
 
-Time Headway error
+## 6. ML Dataset Generation
 
-Integral / Derivative term
+PID 기반 시뮬레이션을 다양한 초기 조건에서 반복 실행하여  
+ML 학습용 데이터셋을 생성합니다.
 
-가속도 saturation 적용 (물리적 제약)
+### Input Features
+- ego_speed
+- lead_speed
+- distance
+- relative_speed
+- time_headway
 
-PID 제어기는:
+### Target
+- accel (PID controller output)
 
-안정적인 baseline 제공
+실행 방법:
 
-ML 학습을 위한 Teacher 역할 수행
-
-6. ML 데이터셋 생성
-
-PID 기반 시뮬레이션을 다양한 초기 조건에서 반복 실행하여
-아래 형태의 데이터셋을 생성합니다.
-
-입력 (State)
-
-ego_speed
-
-lead_speed
-
-distance
-
-relative_speed
-
-time_headway
-
-출력 (Target)
-
-accel (PID가 계산한 가속도)
-
+```bash
 python -m src.ml.generate_ml_dataset
+## 7. ML-based ACC (Imitation Learning)
+-Training
 
-7. ML 기반 ACC (Imitation Learning)
-학습 방식
+-Supervised regression
 
-Supervised Regression
+-Target: PID-generated acceleration
 
-PID 가속도 명령을 target으로 설정
+-Model: RandomForestRegressor
 
-RandomForest 기반 회귀 모델 사용
+-python -m src.ml.train_ml_accel
 
-python -m src.ml.train_ml_accel
 
-목표
+-ML 모델은 PID 제어 정책을 근사하여
+-PID 없이도 유사한 가속도 명령을 생성하는 것을 목표로 합니다.
 
-ML 모델이 PID 제어 정책을 근사하여
-PID 없이도 안정적인 ACC 주행이 가능한지 검증
+## 8. Applying ML Controller to Simulation (STEP 1)
 
-8. ML Controller 시뮬 적용 (STEP 1)
-
-ML 모델은 PID와 동일한 인터페이스를 가지는
-MLACCController 형태로 구현되어,
-기존 시뮬레이션 엔진(runner.py)에 그대로 교체 가능합니다.
+ML 기반 ACC 제어기는 PID 제어기와 동일한 인터페이스를 가지도록 구현되어,
+시뮬레이션 엔진에 직접 교체 적용이 가능합니다.
 
 controller = MLACCController("models/ml_accel_model.pkl")
 df = run_simulation(controller, scenario)
 
 
-PID 코드 수정 없음
+PID 코드 수정 없이 Controller 교체만으로 실험이 가능합니다.
 
-Controller 교체만으로 실험 가능
+9. PID vs ML Performance Comparison
 
-9. PID vs ML 성능 비교
+다음 항목을 중심으로 성능을 비교합니다.
 
-비교 항목:
+Acceleration tracking
 
-가속도 추종 성능
+Time headway maintenance
 
-Time Headway 유지 능력
+Stability and smoothness of acceleration
 
-가속도 안정성 (oscillation, jerk)
+실험 결과, ML 기반 ACC는 PID 가속도를 높은 정확도로 근사하며
+일부 구간에서는 더 부드러운 가속 특성을 보입니다.
 
-ML 모델은:
+10. Future Work
 
-PID 가속도를 높은 정확도로 근사
+PID and ML hybrid controller with fallback logic
 
-일부 구간에서 더 부드러운 가속 특성 확인
+Feature importance analysis for controller interpretation
 
-10. 향후 발전 방향
+Neural Network based ACC controller
 
-PID + ML Hybrid Controller (fallback 구조)
+Extended driving scenarios (cut-in, stop-and-go)
 
-Feature importance 기반 제어 해석
+Reward-based learning approach
 
-Neural Network 기반 ACC Controller
-
-다양한 주행 시나리오 확장 (cut-in, stop-and-go)
-
-Reward 기반 학습으로 확장 (RL 접근)
-
-11. 실행 환경
+11. Requirements
 Python >= 3.10
 numpy
 pandas
@@ -196,16 +216,16 @@ matplotlib
 seaborn
 scikit-learn
 
+
+설치:
+
 pip install -r requirements.txt
 
-12. 프로젝트 의의
+12. Summary
 
-본 프로젝트는 단순한 ML 예제가 아니라,
+본 프로젝트는 제어 이론 기반 접근과 데이터 기반 접근을 결합하여
+ACC 시스템을 설계하고 검증하는 것을 목표로 합니다.
 
-제어 시스템 관점
-
-데이터 기반 접근
-
-시뮬레이션 중심 검증
-
-을 결합한 ADAS / ACC 포트폴리오 프로젝트를 목표로 합니다.
+PID 제어기를 기준 정책으로 설정하고,
+해당 정책을 ML 모델이 학습하여
+데이터 기반 제어기로의 전환 가능성을 실험적으로 확인합니다.
