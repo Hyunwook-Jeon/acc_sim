@@ -1,159 +1,211 @@
-# 🚗 Adaptive Cruise Control (ACC) Simulation Project
-### PID 기반 차량 간 거리 유지 알고리즘 시뮬레이션
+📘 ACC Simulation with PID & ML Imitation Learning
 
----
+Adaptive Cruise Control (ACC) simulation project
+PID 기반 제어기를 기준 정책(Teacher)으로 설정하고,
+시뮬레이션 로그를 활용해 Machine Learning 기반 가속도 제어기(Student) 를 학습 및 검증하는 프로젝트입니다.
 
-## 📌 프로젝트 개요
+1. 프로젝트 개요
 
-본 프로젝트는 **PID 제어 기반 Adaptive Cruise Control(ACC)** 알고리즘을 구현하고,  
-선행 차량과의 **안전 거리(Time Headway)** 를 유지하도록 종속 차량의 가속/감속을 제어하는  
-차량 종방향(Longitudinal) 제어 시뮬레이션이다.
+본 프로젝트는 Adaptive Cruise Control (ACC) 시스템을 단순화한 시뮬레이션 환경에서,
 
-시각화보다는 **제어 로직과 시스템 구조**에 집중하여 설계되었으며,  
-ADAS 및 자율주행 제어 알고리즘의 핵심 개념을 이해하고 검증하는 것을 목표로 한다.
+PID 제어기의 동작을 명확히 이해하고
 
----
+해당 제어 정책을 데이터로 수집한 뒤
 
-## 🎯 프로젝트 목표
+Machine Learning 모델이 PID 제어기를 모사(imitation) 할 수 있는지 검증하는 것을 목표로 합니다.
 
-- PID 제어기를 활용한 ACC 알고리즘 구현
-- Time Headway 기반 목표 거리 계산
-- 선행 차량 속도 변화에 대한 안정적인 추종 제어
-- Rule-based ACC와 PID ACC 성능 비교
-- ADAS 제어 알고리즘 구조화 및 확장성 고려
+궁극적으로는
 
----
+Rule-based PID → Data-driven Controller
+로의 전환 가능성을 실험적으로 확인합니다.
 
-## ⚙️ 시스템 구성
+2. 핵심 아이디어
+PID Controller (Teacher)
+        ↓
+Simulation Log (state → accel)
+        ↓
+ML Regression Model
+        ↓
+ML-based ACC Controller
 
-### 🚘 차량 모델
-- 1차원 종방향 차량 모델
-- 상태 변수
-  - 위치 (x)
-  - 속도 (v)
-  - 가속도 (a)
 
-### 🧠 제어 알고리즘
-- PID 기반 ACC 제어
-- 오차 정의  
-## ⚖️ Rule-based ACC vs PID ACC 성능 비교
+PID 제어기는 baseline / reference policy
 
-본 프로젝트에서는 **Rule-based ACC**와 **PID 기반 ACC**를 동일한 주행 시나리오에서 비교하여  
-제어 방식에 따른 성능 차이를 분석하였다.
+ML 모델은 PID가 만든 가속도 명령을 학습
 
----
+동일 시나리오에서 PID vs ML 주행 성능 비교
 
-### 🔹 Rule-based ACC 특징
+3. 프로젝트 구조
+acc_sim/
+├── data/
+│   └── ml_dataset.csv          # PID 시뮬 로그 기반 ML 데이터셋
+│
+├── notebooks/
+│   ├── eda.ipynb               # 데이터 분석 및 시각화
+│   └── analysis.ipynb
+│
+├── results/
+│   ├── acc_log.csv
+│   └── pid_best_result.csv
+│
+├── src/
+│   ├── adas/
+│   │   └── pid_acc.py          # PID 기반 ACC 제어기
+│   │
+│   ├── sim/
+│   │   └── world.py            # 시뮬레이션 환경
+│   │
+│   ├── vehicle/
+│   │   └── model.py            # 차량 동역학 모델
+│   │
+│   ├── experiments/
+│   │   └── runner.py           # 공용 시뮬레이션 실행 엔진
+│   │
+│   └── ml/
+│       ├── generate_ml_dataset.py  # ML 학습용 데이터 생성
+│       ├── train_ml_accel.py       # ML 가속도 회귀 모델 학습
+│       └── ml_acc_controller.py    # ML 기반 ACC Controller
+│
+├── main.py                      # PID 기반 시뮬 및 Gain Sweep
+├── requirements.txt
+└── README.md
 
-#### 제어 방식
-- 거리 오차 및 상대 속도에 따라 **고정된 규칙(if-else)** 으로 가속/감속 수행
-- 예시
-  - 거리가 너무 가까우면 강제 감속
-  - 거리가 멀면 일정 가속
+4. 시뮬레이션 환경
+차량 모델
 
-#### 장점
-- 구조가 단순하여 구현이 쉬움
-- 계산량이 적어 실시간 적용에 유리
-- 초기 ADAS 시스템에 적합
+1D longitudinal motion
 
-#### 단점
-- 급격한 속도 변화 시 **제어 불연속 발생**
-- 목표 거리 근처에서 **진동(oscillation)** 발생 가능
-- 다양한 주행 상황에 대한 확장성 부족
+상태 변수:
 
----
+ego speed
 
-### 🔹 PID 기반 ACC 특징
+lead speed
 
-#### 제어 방식
-- 거리 오차를 연속적으로 계산
-- 비례(P), 적분(I), 미분(D) 항을 이용한 **연속 제어**
+relative distance
 
-#### 장점
-- 속도 변화에 대해 **부드러운 가속/감속**
-- 목표 거리 수렴 속도 우수
-- 시스템 안정성 향상
-- 실제 차량 제어 시스템과 유사한 구조
+time headway
 
-#### 단점
-- PID Gain 튜닝 필요
-- 파라미터 설정이 잘못될 경우 오버슈트 발생 가능
+ACC 제어 목표
 
----
+목표 Time Headway 유지
 
-### 📊 성능 비교 요약
+과도한 가속/감속 방지
 
-| 항목 | Rule-based ACC | PID ACC |
-|---|---|---|
-| 제어 연속성 | ❌ 불연속 | ✅ 연속 |
-| 안정성 | 보통 | 우수 |
-| 거리 오차 수렴 | 느림 | 빠름 |
-| 진동 발생 | 있음 | 거의 없음 |
-| 확장성 | 낮음 | 높음 |
-| 실제 차량 적용성 | 낮음 | 높음 |
+5. PID 기반 ACC
 
----
+PID 제어기는 다음 항목을 기반으로 가속도를 계산합니다.
 
-### 📌 결론
+Time Headway error
 
-Rule-based ACC는 구조가 단순하여 **기본 개념 검증**에는 적합하지만,  
-실제 주행 환경과 유사한 조건에서는 **PID 기반 ACC가 훨씬 안정적이고 현실적인 제어 성능**을 보였다.
+Integral / Derivative term
 
-본 프로젝트에서는 PID 제어를 적용함으로써  
-ADAS 시스템에서 요구되는 **승차감, 안정성, 연속 제어 특성**을 효과적으로 구현할 수 있음을 확인하였다.
+가속도 saturation 적용 (물리적 제약)
 
----
+PID 제어기는:
 
-## 🚀 프로젝트 발전 방향 (확장 로드맵)
+안정적인 baseline 제공
 
-본 프로젝트는 아래 단계로 발전시킬 수 있다.
+ML 학습을 위한 Teacher 역할 수행
 
----
+6. ML 데이터셋 생성
 
-### 1️⃣ 제어 알고리즘 고도화 (Control Level)
+PID 기반 시뮬레이션을 다양한 초기 조건에서 반복 실행하여
+아래 형태의 데이터셋을 생성합니다.
 
-- Adaptive PID  
-  - 속도 구간별 Gain 자동 조정
-- Feedforward 제어  
-  - 선행 차량 가속도 반영
-- MPC(Model Predictive Control) 기반 ACC
-  - 제약 조건(제동 한계, 안전 거리) 명시적 반영
+입력 (State)
 
----
+ego_speed
 
-### 2️⃣ 주행 시나리오 확장 (Scenario Level)
+lead_speed
 
-- Cut-in / Cut-out 차량 시나리오
-- Stop & Go (정체 구간)
-- 다중 차량 플래투닝(Platooning)
+distance
 
----
+relative_speed
 
-### 3️⃣ 시스템 현실성 강화 (System Level)
+time_headway
 
-- 차량 제동/가속 한계 모델링
-- 센서 노이즈 및 오차 추가
-- 제어 지연(Time Delay) 반영
+출력 (Target)
 
----
+accel (PID가 계산한 가속도)
 
-### 4️⃣ 분석 및 시각화 (Analysis Level)
+python -m src.ml.generate_ml_dataset
 
-- 거리, 속도, 가속도 그래프 시각화
-- Rule-based vs PID 결과 정량 비교
-- 안정도 및 응답 시간 분석
+7. ML 기반 ACC (Imitation Learning)
+학습 방식
 
----
+Supervised Regression
 
-### 5️⃣ 포트폴리오 확장 (Career Level)
+PID 가속도 명령을 target으로 설정
 
-- ADAS / 자율주행 직무 포트폴리오 활용
-- 제어 알고리즘 설계 경험 강조
-- 면접 시 Rule-based → PID → MPC로 발전하는 사고 과정 설명 가능
+RandomForest 기반 회귀 모델 사용
 
----
+python -m src.ml.train_ml_accel
 
-## ✨ 확장 요약
+목표
 
-본 프로젝트는 단순한 시뮬레이션을 넘어  
-**ADAS 제어 알고리즘의 단계적 발전 구조**를 명확히 보여줄 수 있는 기반 프로젝트이다.
+ML 모델이 PID 제어 정책을 근사하여
+PID 없이도 안정적인 ACC 주행이 가능한지 검증
+
+8. ML Controller 시뮬 적용 (STEP 1)
+
+ML 모델은 PID와 동일한 인터페이스를 가지는
+MLACCController 형태로 구현되어,
+기존 시뮬레이션 엔진(runner.py)에 그대로 교체 가능합니다.
+
+controller = MLACCController("models/ml_accel_model.pkl")
+df = run_simulation(controller, scenario)
+
+
+PID 코드 수정 없음
+
+Controller 교체만으로 실험 가능
+
+9. PID vs ML 성능 비교
+
+비교 항목:
+
+가속도 추종 성능
+
+Time Headway 유지 능력
+
+가속도 안정성 (oscillation, jerk)
+
+ML 모델은:
+
+PID 가속도를 높은 정확도로 근사
+
+일부 구간에서 더 부드러운 가속 특성 확인
+
+10. 향후 발전 방향
+
+PID + ML Hybrid Controller (fallback 구조)
+
+Feature importance 기반 제어 해석
+
+Neural Network 기반 ACC Controller
+
+다양한 주행 시나리오 확장 (cut-in, stop-and-go)
+
+Reward 기반 학습으로 확장 (RL 접근)
+
+11. 실행 환경
+Python >= 3.10
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn
+
+pip install -r requirements.txt
+
+12. 프로젝트 의의
+
+본 프로젝트는 단순한 ML 예제가 아니라,
+
+제어 시스템 관점
+
+데이터 기반 접근
+
+시뮬레이션 중심 검증
+
+을 결합한 ADAS / ACC 포트폴리오 프로젝트를 목표로 합니다.
