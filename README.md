@@ -159,6 +159,21 @@ Supervised Regression 문제로 정의합니다.
 ML 기반 ACC는 PID 제어기의 가속 행동을 높은 정확도로 근사하며,
 일부 상황에서는 더 부드러운 가속 특성을 보입니다.
 
+ML 모델을 PID 대신 시뮬에 넣어서 직접 시뮬레이션을 수행할 수 있습니다:
+
+```bash
+from src.ml.ml_acc_controller import MLACCController
+from src.experiments.runner import run_simulation
+
+controller = MLACCController("models/ml_accel_model.pkl")
+scenario = {
+    "ego_init_speed": 20,
+    "lead_init_speed": 15,
+    "initial_gap": 30
+}
+df = run_simulation(controller, scenario)
+```
+
 ---
 
 
