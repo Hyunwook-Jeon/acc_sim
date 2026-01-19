@@ -37,30 +37,53 @@ ML-based ACC Controller
 ## 📁Project Structure
 
 acc_sim/
+
 ├── data/
+
 │   └── ml_dataset.csv
+
 ├── notebooks/
+
 │   ├── eda.ipynb
+
 │   └── analysis.ipynb
+
 ├── results/
+
 │   ├── acc_log.csv
+
 │   └── pid_best_result.csv
+
 ├── src/
+
 │   ├── adas/
+
 │   │   └── pid_acc.py
+
 │   ├── sim/
+
 │   │   └── world.py
+
 │   ├── vehicle/
+
 │   │   └── model.py
+
 │   ├── experiments/
+
 │   │   └── runner.py
+
 │   └── ml/
+
 │       ├── generate_ml_dataset.py
-│       ├── train_ml_accel.py
+
 │       └── ml_acc_controller.py
+
 ├── main.py
+
 ├── requirements.txt
+
 └── README.md
+
 
 ## ⚙️ 설치 및 실행
 
