@@ -46,6 +46,7 @@ def main():
 
     preds = model.predict(X_test)
     rmse = np.sqrt(mean_squared_error(y_test, preds))
+    rmse = mean_squared_error(y_test, preds, squared=False)
     r2 = r2_score(y_test, preds)
 
     model_dir.mkdir(parents=True, exist_ok=True)
