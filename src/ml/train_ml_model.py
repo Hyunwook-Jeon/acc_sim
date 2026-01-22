@@ -45,7 +45,11 @@ def main():
     model.fit(X_train, y_train)
 
     preds = model.predict(X_test)
-    rmse = np.sqrt(mean_squared_error(y_test, preds))
+
+    # ✅ SAFE RMSE (works regardless of sklearn version)
+    mse = mean_squared_error(y_test, preds)
+    rmse = float(np.sqrt(mse))
+
     r2 = r2_score(y_test, preds)
 
     model_dir.mkdir(parents=True, exist_ok=True)
