@@ -5,7 +5,7 @@ class AdaptiveCruiseControl:
         self.target_speed = target_speed
         self.min_headway = min_headway
 
-    def compute_acceleration(self, ego, headway):
+    def compute_acceleration(self, ego, headway, dt=None):
         if headway is None:
             # 앞차 없음 → 목표 속도로 가속
             if ego.speed < self.target_speed:

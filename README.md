@@ -84,6 +84,23 @@ acc_sim/
 
 └── README.md
 
+---
+
+## 📊 Results & Analysis Files
+
+### 결과 CSV 위치
+
+- PID Gain Sweep 결과: `results/pid_gain_sweep.csv`
+  - 컬럼: `kp, ki, kd, mean_th_error`
+- 시뮬레이션 로그: `results/pid_tuning_result.csv`
+  - 컬럼: `time, ego_speed, lead_speed, distance, time_headway, accel`
+
+### 분석 스크립트
+
+- Gain Sweep Heatmap: `python -m src.analysis.visualize_pid`
+- Best/Worst Gain 비교: `python -m src.analysis.compare_pid`
+- 시뮬 로그 성능 Plot: `python -m src.analysis.plot_pid_results`
+
 
 ## ⚙️ 설치 및 실행
 
@@ -172,6 +189,15 @@ Supervised Regression 문제로 정의합니다.
 - Input: vehicle state
 
 - Output: acceleration
+
+### ML 모델 학습 및 저장
+
+`data/ml_dataset.csv`를 이용해 모델을 학습하고
+`models/ml_accel_model.pkl`에 저장합니다.
+
+```bash
+python -m src.ml.train_ml_model
+```
 
 
 
