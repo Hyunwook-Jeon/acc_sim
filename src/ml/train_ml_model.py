@@ -46,7 +46,7 @@ def main():
 
     preds = model.predict(X_test)
 
-    # ✅ SAFE RMSE (works on older sklearn too)
+    # ✅ SAFE RMSE (works regardless of sklearn version)
     mse = mean_squared_error(y_test, preds)
     rmse = float(np.sqrt(mse))
 
