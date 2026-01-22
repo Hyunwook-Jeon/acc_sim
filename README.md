@@ -84,6 +84,23 @@ acc_sim/
 
 └── README.md
 
+---
+
+## 📊 Results & Analysis Files
+
+### 결과 CSV 위치
+
+- PID Gain Sweep 결과: `results/pid_gain_sweep.csv`
+  - 컬럼: `kp, ki, kd, mean_th_error`
+- 시뮬레이션 로그: `results/pid_tuning_result.csv`
+  - 컬럼: `time, ego_speed, lead_speed, distance, time_headway, accel`
+
+### 분석 스크립트
+
+- Gain Sweep Heatmap: `python -m src.analysis.visualize_pid`
+- Best/Worst Gain 비교: `python -m src.analysis.compare_pid`
+- 시뮬 로그 성능 Plot: `python -m src.analysis.plot_pid_results`
+
 
 ## ⚙️ 설치 및 실행
 
@@ -93,6 +110,35 @@ acc_sim/
 pip install -r requirements.txt
 ```
 ---
+
+## 🚀 Quick Start (PID → Dataset → ML → Simulation)
+
+아래 순서대로 실행하면 전체 파이프라인을 한 번에 확인할 수 있습니다.
+
+1) PID Gain Sweep (선택)
+```bash
+python -m src.experiments.pid_gain_sweep
+```
+
+2) ML 학습용 데이터셋 생성
+```bash
+python -m src.ml.generate_ml_dataset
+```
+
+3) ML 모델 학습 및 저장
+```bash
+python -m src.ml.train_ml_model
+```
+
+4) ML 기반 시뮬레이션 실행
+```bash
+python -m src.experiments.run_ml_acc
+```
+
+각 단계의 출력 파일:
+- `results/pid_gain_sweep.csv` (Gain Sweep 결과)
+- `data/ml_dataset.csv` (학습 데이터셋)
+- `models/ml_accel_model.pkl` (학습된 ML 모델)
 
 ## Simulation Environment
 
@@ -173,6 +219,15 @@ Supervised Regression 문제로 정의합니다.
 
 - Output: acceleration
 
+### ML 모델 학습 및 저장
+
+`data/ml_dataset.csv`를 이용해 모델을 학습하고
+`models/ml_accel_model.pkl`에 저장합니다.
+
+```bash
+python -m src.ml.train_ml_model
+```
+
 
 
 ---
@@ -195,6 +250,12 @@ scenario = {
     "initial_gap": 30
 }
 df = run_simulation(controller, scenario)
+```
+
+또는 준비된 실행 스크립트를 사용할 수 있습니다:
+
+```bash
+python -m src.experiments.run_ml_acc
 ```
 
 ---

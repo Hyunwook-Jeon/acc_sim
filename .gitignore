@@ -13,6 +13,9 @@ venv/
 # Data (logs)
 data/*.csv
 
+# Trained models
+models/*.pkl
+
 # Jupyter
 .ipynb_checkpoints/
 

@@ -1,9 +1,11 @@
 import csv
 import math
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 
 
-CSV_FILE = "pid_tuning_result.csv"
+CSV_FILE = Path(__file__).resolve().parents[2] / "results/pid_tuning_result.csv"
 TARGET_TH = 1.5
 
 
